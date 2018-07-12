@@ -32,7 +32,31 @@ io.on('connection',(socket)=>{
 	socket.on('disconnect',()=>{
 		console.log('user is disconnected');
 	});
-});
+
+	//.emit() method is to emit the event
+	// socket.emit('newEmail',{
+	// 	to: "ratan@example.com",
+	// 	text: "hey whats up man!",
+	//
+	// });
+
+	//get email from the client
+// 	socket.on('getEmail',(email)=>{
+// 		console.log('new email received',email);
+// 	});
+
+	socket.emit('newMessage',{
+		from: "ratan@example.com",
+		text: "hello everybody",
+		CreatedAt: "12 am",
+	});
+
+	socket.on('createMessage',(message)=>{
+		console.log('message received from client',message);
+	})
+
+ });
+
 
 
 
