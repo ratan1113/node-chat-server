@@ -5,9 +5,7 @@ const socketIO=require('socket.io');
 
 const publicPath=path. join(__dirname,'../public');
 const port=process.env.PORT||3000;
-// console.log(publicPath);
-// console.log(__dirname);
-// console.log(__dirname+'../public');
+var {generateMessage}=require('./util/messaging');
 
 //create an express object
 const app=express();
@@ -20,10 +18,8 @@ var io=socketIO(server);
 
 //setting a middleware to render public files:
 app.use(express.static(publicPath));
-//
-// app.get('/',(req,res)=>{
-// 	res.send('<h2>welcome to main page of the project</h2>');
-// });
+
+
 
 //io.on method let you register a event listener .which will called when the event is occure
 io.on('connection',(socket)=>{
@@ -33,27 +29,24 @@ io.on('connection',(socket)=>{
 		console.log('user is disconnected');
 	});
 
-	//.emit() method is to emit the event
-	// socket.emit('newEmail',{
-	// 	to: "ratan@example.com",
-	// 	text: "hey whats up man!",
-	//
-	// });
+	//emit the message to using simplified function instead of object.
+	socket.emit('newMessage' , generateMessage('admin','hello users youb are welcome') );
 
-	//get email from the client
-// 	socket.on('getEmail',(email)=>{
-// 		console.log('new email received',email);
-// 	});
 
-	socket.emit('newMessage',{
-		from: "ratan@example.com",
-		text: "hello everybody",
-		CreatedAt: "12 am",
-	});
-
+	//listen the event createMessage and print it on console
 	socket.on('createMessage',(message)=>{
 		console.log('message received from client',message);
-	})
+
+		//io.emit()  emit event to every single connection
+		//socket.emit() emit the event in single connection
+		//socket.emit.broadcast() emit event to every single connection excpt source connection
+
+		socket.broadcast.emit('newMessage',{
+			from: message.from,
+			text: message.text,
+			CreatedAt: new Date().getTime()
+		});
+	});
 
  });
 
