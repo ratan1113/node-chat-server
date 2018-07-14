@@ -14,11 +14,26 @@ socket.on('disconnect',function(){
 
 //listen the newMessage event
 socket.on('newMessage',function(message){
-	console.log('email received',message);
-})
+	console.log('message received',message);
+	var li=jQuery('<li></li>');
+	li.text(`${message.from} : ${message.text}`);
+	jQuery('#message-list').append(li);
+});
 
 
 
 //socket.emit() is to emit the event.
 //in client side we refer a regular type function insted of arrow because all older browser does not
 //support latest javascript technology
+
+
+
+jQuery('#message-form').on('submit',function(e){
+	e.preventDefault();
+	socket.emit('createMessage',{
+		from: 'User',
+		text: jQuery('[name=message]').val(),
+	},function(data){
+		console.log('response from server: ',data);
+	});
+});

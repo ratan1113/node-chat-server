@@ -30,11 +30,11 @@ io.on('connection',(socket)=>{
 	});
 
 	//emit the message to using simplified function instead of object.
-	socket.emit('newMessage' , generateMessage('admin','hello users youb are welcome') );
+	socket.emit('newMessage' , generateMessage('admin','hello users you are welcome') );
 
 
 	//listen the event createMessage and print it on console
-	socket.on('createMessage',(message)=>{
+	socket.on('createMessage',(message,callback)=>{
 		console.log('message received from client',message);
 
 		//io.emit()  emit event to every single connection
@@ -46,6 +46,7 @@ io.on('connection',(socket)=>{
 			text: message.text,
 			CreatedAt: new Date().getTime()
 		});
+		callback('message broadcasted');
 	});
 
  });
