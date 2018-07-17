@@ -5,7 +5,7 @@ const socketIO=require('socket.io');
 
 const publicPath=path. join(__dirname,'../public');
 const port=process.env.PORT||3000;
-var {generateMessage}=require('./util/messaging');
+var {generateMessage,generateLocationMessage}=require('./util/messaging');
 
 //create an express object
 const app=express();
@@ -29,24 +29,18 @@ io.on('connection',(socket)=>{
 		console.log('user is disconnected');
 	});
 
-	//emit the message to using simplified function instead of object.
-	socket.emit('newMessage' , generateMessage('admin','hello users you are welcome') );
-
-
 	//listen the event createMessage and print it on console
 	socket.on('createMessage',(message,callback)=>{
-		console.log('message received from client',message);
-
-		//io.emit()  emit event to every single connection
-		//socket.emit() emit the event in single connection
-		//socket.emit.broadcast() emit event to every single connection excpt source connection
-
-		socket.broadcast.emit('newMessage',{
+		io.emit('newMessage',{
 			from: message.from,
 			text: message.text,
 			CreatedAt: new Date().getTime()
 		});
 		callback('message broadcasted');
+	});
+	//
+	socket.on('createLocationMessage',(coords)=>{
+		io.emit('newLocationMessage',generateLocationMessage('admin',coords.latitude,coords.longitude));
 	});
 
  });
