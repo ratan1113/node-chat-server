@@ -15,17 +15,19 @@ socket.on('disconnect',function(){
 //listen the newMessage event
 socket.on('newMessage',function(message){
 	console.log('message received',message);
+	var formatedTime=moment(message.CreatedAt).format('h:mm a');
 	var li=jQuery('<li></li>');
-	li.text(`${message.from} : ${message.text}`);
+	li.text(`${message.from} ${formatedTime}: ${message.text}`);
 	jQuery('#message-list').append(li);
 });
 
 //listen the newLocationMessage preventDefault
 socket.on('newLocationMessage',function(message){
 	//display the data coming from createServer
+	var formatedTime=moment(message.CreatedAt).format('h:mm a');
 	var li=jQuery('<li></li>');
 	var a=jQuery('<a target="_blank">click to show the my location</a>');
-	li.text(`${message.from} : `);
+	li.text(`${message.from} ${formatedTime}: `);
 	a.attr('href',message.url);
 	li.append(a);
 	jQuery('#message-list').append(li);

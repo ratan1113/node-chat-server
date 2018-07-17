@@ -7,7 +7,7 @@ describe('generateMessage', ()=>{
 		var from='jen';
 		var text='some message';
 		var message=generateMessage(from,text);
-
+		//expect(new generateMessage('jen','some message')).toBeA(message);
 		expect(message.CreatedAt).toBeA('number');
 		expect(message).toInclude({from,text});
 	});
