@@ -128,7 +128,7 @@ button:disabled {
 
 .chat__footer {
   background: #e6eaee;
-	position: fixed;
+	position: relative;
 	bottom: 0;
   display: flex;
   padding: 10px;

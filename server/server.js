@@ -30,13 +30,9 @@ io.on('connection',(socket)=>{
 	});
 
 	//listen the event createMessage and print it on console
-	socket.on('createMessage',(message,callback)=>{
-		io.emit('newMessage',{
-			from: message.from,
-			text: message.text,
-			CreatedAt: new Date().getTime()
-		});
-		callback('message broadcasted');
+	socket.on('createMessage',(message)=>{
+		io.emit('newMessage',generateMessage('user', message.text));
+		//callback('message broadcasted');
 	});
 	//
 	socket.on('createLocationMessage',(coords)=>{

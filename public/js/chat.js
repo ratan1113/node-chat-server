@@ -1,11 +1,24 @@
 var socket=io();
+
+function scrollToBottom(){
+//selector
+var message=jQuery('#message');
+var newMessage=message.children('li:last-child'); //selector for  newly created message
+//height
+var clientHeight=message.prop('clientHeight');   //prop method gives us a cross browser way to fetch a property
+var scrollTop=message.prop('scrollTop') ;
+var scrollHeight=message.prop('scrollHeight');
+var newMessageHeight=newMessage.innerHeight();
+var lastMessageHeight=newMessage.prev().innerHeight();   //height of recent previous message
+
+if(scrollTop+clientHeight+newMessageHeight+lastMessageHeight<=scrollHeight){
+	message.scrollTop(scrollHeight);
+}
+}
+
+
 socket.on('connect',function(){
 	console.log('connected to server');
-
-	// socket.emit('createMessage',{
-	// 	from: "someone",
-	// 	text: "hello server",
-	// });
 });
 socket.on('disconnect',function(){
 	console.log('disconnected from the server');
@@ -14,23 +27,28 @@ socket.on('disconnect',function(){
 
 //listen the newMessage event
 socket.on('newMessage',function(message){
-	console.log('message received',message);
 	var formatedTime=moment(message.CreatedAt).format('h:mm a');
-	var li=jQuery('<li></li>');
-	li.text(`${message.from} ${formatedTime}: ${message.text}`);
-	jQuery('#message-list').append(li);
+	var template=jQuery('#message-template').html();
+	var html=Mustache.render(template,{
+		from: message.from,
+		text: message.text,
+		CreatedAt: formatedTime
+	});
+	jQuery('#message').append(html);
+	scrollToBottom();
 });
 
 //listen the newLocationMessage preventDefault
 socket.on('newLocationMessage',function(message){
-	//display the data coming from createServer
 	var formatedTime=moment(message.CreatedAt).format('h:mm a');
-	var li=jQuery('<li></li>');
-	var a=jQuery('<a target="_blank">click to show the my location</a>');
-	li.text(`${message.from} ${formatedTime}: `);
-	a.attr('href',message.url);
-	li.append(a);
-	jQuery('#message-list').append(li);
+	var location=jQuery('#locationMessage-template').html();
+	var html=Mustache.render(location,{
+		from: message.from,
+		url: message.url,
+		CreatedAt: formatedTime,
+	});
+	jQuery('#message').append(html);
+	scrollToBottom();
 });
 
 
@@ -44,12 +62,9 @@ socket.on('newLocationMessage',function(message){
 jQuery('#message-form').on('submit',function(e){
 	e.preventDefault();
 	socket.emit('createMessage',{
-		from: jQuery('[name=message-from]').val(),
 		text: jQuery('[name=message]').val(),
-	},function(data){
-		//clear the message content from input field after receiving the message by setting it empty
-		jQuery('[name=message]').val('');
 	});
+	jQuery('[name=message]').val('');
 });
 
 //create event for the sendlocation button

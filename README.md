@@ -46,3 +46,12 @@ io.on('connection',(socket)=>{
 		callback('this is from the server');
 		})
 });
+
+
+
+// var li=jQuery('<li></li>');
+// var a=jQuery('<a target="_blank">click to show the my location</a>');
+// li.text(`${message.from} ${formatedTime}: `);
+// a.attr('href',message.url);
+// li.append(a);
+// jQuery('#message-list').append(li);
