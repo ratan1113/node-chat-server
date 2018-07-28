@@ -19,6 +19,16 @@ if(scrollTop+clientHeight+newMessageHeight+lastMessageHeight<=scrollHeight){
 
 socket.on('connect',function(){
 	console.log('connected to server');
+	var param=jQuery.deparam(window.location.search);
+	socket.emit('join',param,function(err){
+		if(err){
+			alert(err);
+			window.location.href='/';
+		}else{
+			console.log('no error');
+		}
+	});
+
 });
 socket.on('disconnect',function(){
 	console.log('disconnected from the server');
@@ -51,7 +61,15 @@ socket.on('newLocationMessage',function(message){
 	scrollToBottom();
 });
 
+//when new user enter into the room or a user leave the room
+socket.on('updateUserList',function(users){
+	var ol=jQuery('<ol></ol>');
+	users.forEach(function(user){
+		ol.append(jQuery('<li></li>').text(user));
 
+	});
+	jQuery('#users').html(ol);
+});
 
 //socket.emit() is to emit the event.
 //in client side we refer a regular type function insted of arrow because all older browser does not
